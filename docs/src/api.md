@@ -1,5 +1,9 @@
 # API Reference
 
+```@docs
+MultiscaleTransformsBase
+```
+
 ## Transforms and verbs
 
 ```@docs

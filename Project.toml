@@ -1,0 +1,20 @@
+name = "MultiscaleTransformsBase"
+uuid = "bb7a9938-a16c-4a85-ac5b-efa2b8f5fd01"
+version = "0.1.0"
+authors = ["Tamás Hakkel"]
+
+[deps]
+Adapt = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
+Compat = "34da2185-b29b-5c13-b0c7-acf172513d20"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[workspace]
+projects = ["test", "docs"]
+
+[compat]
+Adapt = "4"
+Compat = "4.10"
+LinearAlgebra = "1"
+Test = "1"
+julia = "1.10"

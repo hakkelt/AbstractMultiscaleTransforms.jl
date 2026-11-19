@@ -1,0 +1,14 @@
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+*.gcov
+**/Manifest.toml
+**/Manifest-v*.toml
+/.temp/
+/docs/build/
+lcov.info
+
+# Agentic tools
+.gemini
+.claude
+.copilot

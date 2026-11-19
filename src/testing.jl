@@ -1,0 +1,119 @@
+"""
+    MultiscaleTransformsBase.Testing
+
+Conformance tests for implementations of the interface; see
+[`test_transform`](@ref MultiscaleTransformsBase.Testing.test_transform).
+"""
+module Testing
+
+using Test: @test, @testset, @test_throws
+using LinearAlgebra: LinearAlgebra
+using ..MultiscaleTransformsBase: MultiscaleTransformsBase, AbstractMultiscaleTransform,
+    analyze, analyze!, synthesize, synthesize!, make_workspace, transform, similar_coefficients,
+    subband_layout, nsubbands, subband, supports_streaming
+
+"""
+    test_transform(t, x; rtol, wrong_size = nothing, exact_real_linear = false)
+
+Run the interface's conformance tests for transform `t` on data `x`, inside a
+`@testset`:
+
+- `analyze` returns an array, whose `nsubbands(t, size(x))` subbands cover all
+  of its entries; `synthesize` reconstructs `x` (to `rtol`);
+- `analyze!`/`synthesize!` into preallocated arrays, the workspace (`make_workspace`)
+  and workspace-only forms, and `threaded = true`/`false` give the same results;
+- the transform equals its copy, with an equal hash;
+- broadcasting, `similar`, `copyto!`, `norm` and `dot` work on the coefficients;
+- the streaming forms, if `supports_streaming(t)`, give the same subbands and
+  reconstruction;
+- a workspace for another size (`wrong_size`, when given) is rejected;
+- for complex `x`, the transform is real-linear:
+  `analyze(t, x) ≈ complex.(analyze(t, real(x)), analyze(t, imag(x)))`, exactly
+  (`==`) when `exact_real_linear`.
+"""
+function test_transform(
+        t::AbstractMultiscaleTransform, x::AbstractArray;
+        rtol::Real = sqrt(eps(real(float(eltype(x))))), wrong_size = nothing, exact_real_linear::Bool = false
+    )
+    return @testset "interface conformance: $(nameof(typeof(t)))" begin
+        dims = size(x)
+        c = analyze(t, x)
+        @test c isa AbstractArray
+        n = nsubbands(t, dims)
+        @test n == length(subband_layout(t, dims))
+        @test n >= 1
+        bands = [subband(t, c, i) for i in 1:n]
+        @test all(b -> b isa AbstractArray, bands)
+        @test sum(length, bands) == length(c)
+
+        y = synthesize(t, c)
+        @test size(y) == dims
+        @test isapprox(y, x; rtol)
+
+        c2 = similar_coefficients(t, x)
+        @test analyze!(c2, t, x) === c2
+        @test isapprox(c2, c; rtol)
+        y2 = similar(y)
+        @test synthesize!(y2, t, c) === y2
+        @test isapprox(y2, x; rtol)
+
+        for threaded in (false, true)
+            @test isapprox(analyze(t, x; threaded), c; rtol)
+            @test isapprox(synthesize(t, c; threaded), x; rtol)
+        end
+
+        ws = make_workspace(t, x)
+        @test transform(ws) == t
+        @test size(ws) == dims
+        @test isapprox(analyze(t, x; workspace = ws), c; rtol)
+        @test isapprox(analyze(ws, x), c; rtol)
+        fill!(c2, zero(eltype(c2)))
+        @test analyze!(c2, ws, x) === c2
+        @test isapprox(c2, c; rtol)
+        @test isapprox(synthesize(t, c; workspace = ws), x; rtol)
+        @test isapprox(synthesize(ws, c), x; rtol)
+        @test synthesize!(y2, ws, c) === y2
+        @test isapprox(y2, x; rtol)
+
+        @test t == deepcopy(t)
+        @test hash(t) == hash(deepcopy(t))
+
+        d = 2 .* c .+ c
+        @test typeof(d) == typeof(c)
+        @test isapprox(d, 3 .* c; rtol)
+        e = similar(c)
+        @test copyto!(e, c) == c
+        @test LinearAlgebra.norm(c)^2 ≈ real(LinearAlgebra.dot(c, c))
+
+        if supports_streaming(t)
+            seen = falses(n)
+            r = analyze(t, x) do i, band
+                seen[i] = true
+                @test isapprox(band, subband(t, c, i); rtol, atol = rtol * LinearAlgebra.norm(c))
+                return nothing
+            end
+            @test r === nothing
+            @test all(seen)
+            y3 = similar(y)
+            @test synthesize!(i -> subband(t, c, i), y3, t) === y3
+            @test isapprox(y3, x; rtol)
+        end
+
+        if wrong_size !== nothing
+            other = make_workspace(t, eltype(x), Tuple(wrong_size))
+            @test_throws DimensionMismatch analyze(t, x; workspace = other)
+        end
+
+        if eltype(x) <: Complex
+            re, im = analyze(t, real(x)), analyze(t, imag(x))
+            parts = complex.(re, im)
+            if exact_real_linear
+                @test c == parts
+            else
+                @test isapprox(c, parts; rtol)
+            end
+        end
+    end
+end
+
+end # module

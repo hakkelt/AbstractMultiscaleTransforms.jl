@@ -25,7 +25,7 @@ An implementation defines, for its transform type `T`:
 |:--|:--|
 | `analyze(t::T, x; ...)` | `analyze!(similar_coefficients(t, x), t, x; ...)` |
 | `synthesize(t::T, c; ...)` | `synthesize!` into an array of size `signal_size(t, c)` |
-| `signal_size(t::T, c)` | from a `SubbandVector`'s layout; otherwise required by the default `synthesize` |
+| `signal_size(t::T, c)` | needed by the default `synthesize`, except for `SubbandVector` coefficients |
 | `make_workspace(t::T, T, dims; ...)` / `make_workspace(t::T, x; ...)` | a [`DefaultWorkspace`](@ref) |
 | `nsubbands(t::T, dims)` | `length(subband_layout(t, dims))` |
 | `analyze(f, t::T, x; ...)`, `synthesize!(f, x, t::T; ...)` with `supports_streaming(t::T) = true` | not supported |
@@ -168,8 +168,9 @@ function subband end
     signal_size(t, c) -> Dims
 
 Size of the data that the coefficients `c` of `t` synthesize to, used by the
-default [`synthesize`](@ref).  Known for a [`SubbandVector`](@ref) from its
-layout; other coefficient types need a method.
+default [`synthesize`](@ref) when no workspace is given.  The default reads a
+[`SubbandVector`](@ref)'s size from its layout without calling this function;
+other coefficient types need a method.
 """
 function signal_size end
 
@@ -188,7 +189,7 @@ function analyze(t::AbstractMultiscaleTransform, x::AbstractArray; workspace = n
 end
 
 function synthesize(t::AbstractMultiscaleTransform, c::AbstractArray; workspace = nothing, threaded = nothing)
-    dims = workspace === nothing ? signal_size(t, c) : size(workspace)
+    dims = workspace === nothing ? _signal_size(t, c) : size(workspace)
     T = workspace === nothing ? eltype(c) : eltype(workspace)
     return synthesize!(similar(c, T, dims), t, c; workspace, threaded)
 end

@@ -32,6 +32,9 @@ end
     @test signal_size(t, analyze(t, x)) == (4, 4)
     h = Haar(1)
     c = analyze(h, randn(8))
-    @test signal_size(h, c) == (8,)
+    @test size(synthesize(h, c)) == (8,)          # size from the SubbandVector's layout
     @test !MultiscaleTransformsBase.supports_streaming(h)
+    # The toy transforms' methods (e.g. `signal_size(::Split, ::AbstractArray)`)
+    # must not be ambiguous with the interface's own.
+    @test isempty(Test.detect_ambiguities(MultiscaleTransformsBase, ToyTransforms))
 end

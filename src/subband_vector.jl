@@ -97,7 +97,11 @@ Base.unaliascopy(c::SubbandVector) = copy(c)
 
 nsubbands(c::SubbandVector) = nsubbands(c.layout)
 subband(c::SubbandVector, i::Integer) = reshape(view(c.data, c.layout.ranges[i]), c.layout.sizes[i])
-signal_size(::AbstractMultiscaleTransform, c::SubbandVector) = c.layout.signal_size
+# The default `synthesize` reads the data size from a SubbandVector's layout;
+# `signal_size` itself gets no method here, so that a package's
+# `signal_size(::MyTransform, ::AbstractArray)` cannot be ambiguous with it.
+_signal_size(::AbstractMultiscaleTransform, c::SubbandVector) = c.layout.signal_size
+_signal_size(t::AbstractMultiscaleTransform, c) = signal_size(t, c)
 
 Base.similar(c::SubbandVector, ::Type{S}) where {S} = SubbandVector(similar(c.data, S), c.layout)
 Base.similar(c::SubbandVector, ::Type{S}, dims::Dims) where {S} = similar(c.data, S, dims)

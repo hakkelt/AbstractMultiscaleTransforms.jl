@@ -85,6 +85,9 @@ end
     @test c == adapt(JLArray, host)
     @test axpy!(1.0, c, d) === d
     @test Array(subband(c, 1)) == [1.0 3.0; 2.0 4.0]
+    @test Array(c) == collect(1.0:16.0)
+    @test Vector(c) == collect(1.0:16.0)
+    @test collect(c) == collect(1.0:16.0)
     @test similar(c).data isa JLArray
     @test copyto!(similar(c), c) == c
     @test fill!(similar(c), 0.0) == adapt(JLArray, SubbandVector(zeros(16), l))

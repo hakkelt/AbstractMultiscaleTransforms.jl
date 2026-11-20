@@ -29,7 +29,8 @@ Run the interface's conformance tests for transform `t` on data `x`, inside a
 - a workspace for another size (`wrong_size`, when given) is rejected;
 - for complex `x`, the transform is real-linear:
   `analyze(t, x) ≈ complex.(analyze(t, real(x)), analyze(t, imag(x)))`, exactly
-  (`==`) when `exact_real_linear`.
+  (`==`) when `exact_real_linear`; each side runs through a workspace built
+  once, so that FFT planning between calls cannot change the rounding.
 """
 function test_transform(
         t::AbstractMultiscaleTransform, x::AbstractArray;
@@ -105,12 +106,15 @@ function test_transform(
         end
 
         if eltype(x) <: Complex
-            re, im = analyze(t, real(x)), analyze(t, imag(x))
-            parts = complex.(re, im)
+            # Through workspaces built once: a call without one may plan its
+            # FFTs differently from an earlier call, which can change rounding.
+            ws_real = make_workspace(t, real(x))
+            whole = analyze(t, x; workspace = ws)
+            parts = complex.(analyze(t, real(x); workspace = ws_real), analyze(t, imag(x); workspace = ws_real))
             if exact_real_linear
-                @test c == parts
+                @test whole == parts
             else
-                @test isapprox(c, parts; rtol)
+                @test isapprox(whole, parts; rtol)
             end
         end
     end

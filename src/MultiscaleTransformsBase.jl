@@ -13,7 +13,6 @@ re-exports them, and checks its types with
 """
 module MultiscaleTransformsBase
 
-using Adapt: Adapt
 using Compat: @compat
 using LinearAlgebra: LinearAlgebra
 

@@ -45,7 +45,8 @@ Broadcasting, `similar`, `copyto!`, `fill!`, `==`, `isapprox`, `mapreduce`
 (`sum`, `maximum`, ...) and `LinearAlgebra.dot`/`norm`/`axpy!`/`axpby!`/
 `rmul!`/`lmul!` act on `data` directly, so they need no scalar indexing on
 a device and keep the layout.  Operands of one operation must share a layout.
-`Adapt.adapt` moves the storage.
+`Adapt.adapt` moves the storage (a method defined once Adapt is loaded, as
+every GPU array package does).
 
 ```jldoctest
 julia> using MultiscaleTransformsBase
@@ -143,8 +144,6 @@ function LinearAlgebra.axpby!(α::Number, x::SubbandVector, β::Number, y::Subba
 end
 LinearAlgebra.rmul!(c::SubbandVector, α::Number) = (LinearAlgebra.rmul!(c.data, α); c)
 LinearAlgebra.lmul!(α::Number, c::SubbandVector) = (LinearAlgebra.lmul!(α, c.data); c)
-
-Adapt.adapt_structure(to, c::SubbandVector) = SubbandVector(Adapt.adapt(to, c.data), c.layout)
 
 function Base.summary(io::IO, c::SubbandVector)
     n = nsubbands(c)

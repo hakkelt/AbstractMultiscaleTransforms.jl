@@ -38,3 +38,8 @@ end
     # must not be ambiguous with the interface's own.
     @test isempty(Test.detect_ambiguities(MultiscaleTransformsBase, ToyTransforms))
 end
+
+@testitem "test_transform needs a transform and an array" begin
+    using MultiscaleTransformsBase.Testing: test_transform
+    @test_throws MethodError test_transform(1, 2)
+end

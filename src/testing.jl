@@ -19,6 +19,9 @@ Run the interface's conformance tests for transform `t` on data `x`, inside a
   of its entries; `synthesize` reconstructs `x` (to `rtol`);
 - `analyze!`/`synthesize!` into preallocated arrays, the workspace (`make_workspace`)
   and workspace-only forms, and `threaded = true`/`false` give the same results;
+- both `make_workspace` forms accept the shared keywords `flags`, `tasks`,
+  `tune` and `prewarm`, the workspace built with them gives the same results,
+  and an unknown keyword throws a `MethodError`;
 - the transform equals its copy, with an equal hash;
 - broadcasting, `similar`, `copyto!`, `norm` and `dot` work on the coefficients;
 - the streaming forms, if `supports_streaming(t)`, give the same subbands and

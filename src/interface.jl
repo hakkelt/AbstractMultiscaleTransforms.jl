@@ -113,13 +113,34 @@ function synthesize! end
 
 Precompute what transform `t` needs for data of element type `T` and size
 `dims`.  The second form takes element type, size and array type (so the
-device) from `x`.  Keyword arguments are transform-specific.
+device) from `x`.
+
+Every transform accepts these keywords on both forms, so that code can build a
+workspace without knowing the transform family.  A transform with no use for
+one accepts and ignores it, and says so in its documentation; the defaults are
+the transform's own (its fastest choice).
+
+- `flags`: the FFTW planner flags of the host FFT plans (an integer, such as
+  `FFTW.MEASURE` or `FFTW.ESTIMATE`).
+- `tasks`: the most tasks a call with the workspace runs on the host, and with
+  them the per-task buffers; `nothing` means one per Julia thread, `1` a
+  serial workspace.
+- `tune`: measure the fastest batching of a device workspace at construction
+  (a `Bool`).
+- `prewarm`: run the transform once at construction, so that the first call
+  is compiled and allocates nothing (a `Bool`).
+
+A transform may accept further keywords of its own.  An unknown keyword throws
+a `MethodError`.
 
 Without a method for `t`, both return a [`DefaultWorkspace`](@ref), which
-holds nothing but `(t, T, dims)`.
+holds nothing but `(t, T, dims)` and ignores the keywords above.
 """
-make_workspace(t::AbstractMultiscaleTransform, ::Type{T}, dims::Dims) where {T <: Number} =
-    DefaultWorkspace(t, T, dims)
+make_workspace(
+    t::AbstractMultiscaleTransform, ::Type{T}, dims::Dims;
+    flags::Union{Integer, Nothing} = nothing, tasks::Union{Integer, Nothing} = nothing,
+    tune::Bool = false, prewarm::Bool = false
+) where {T <: Number} = DefaultWorkspace(t, T, dims)
 make_workspace(t::AbstractMultiscaleTransform, x::AbstractArray; kwargs...) =
     make_workspace(t, eltype(x), size(x); kwargs...)
 

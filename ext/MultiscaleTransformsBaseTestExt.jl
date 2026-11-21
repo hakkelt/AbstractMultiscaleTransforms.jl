@@ -51,6 +51,16 @@ function test_transform(
         @test synthesize!(y2, ws, c) === y2
         @test isapprox(y2, x; rtol)
 
+        # The keywords every workspace accepts (64 is `FFTW.ESTIMATE`).
+        shared = (; flags = 64, tasks = 1, tune = false, prewarm = false)
+        ws_typed = make_workspace(t, eltype(x), dims; shared...)
+        @test transform(ws_typed) == t
+        @test size(ws_typed) == dims
+        ws_shared = make_workspace(t, x; shared...)
+        @test isapprox(analyze(ws_shared, x), c; rtol)
+        @test isapprox(synthesize(ws_shared, c), x; rtol)
+        @test_throws MethodError make_workspace(t, x; no_such_keyword = true)
+
         @test t == deepcopy(t)
         @test hash(t) == hash(deepcopy(t))
 

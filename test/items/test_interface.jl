@@ -21,6 +21,8 @@ end
     ws = make_workspace(t, x)
     @test ws isa DefaultWorkspace
     @test ws == make_workspace(t, Float64, (4, 4))
+    @test ws == make_workspace(t, x; flags = 0, tasks = 2, tune = true, prewarm = true)
+    @test_throws MethodError make_workspace(t, x; threads = 2)
     @test transform(ws) === t
     @test eltype(ws) === Float64
     @test size(ws) == (4, 4)

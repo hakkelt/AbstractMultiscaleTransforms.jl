@@ -30,7 +30,9 @@ end
 
 and `synthesize!` likewise.  A transform with plans or buffers to reuse defines
 its own workspace type (a subtype of [`AbstractTransformWorkspace`](@ref) with
-[`transform`](@ref), `eltype` and `size`) and `make_workspace` methods;
+[`transform`](@ref), `eltype` and `size`) and `make_workspace` methods,
+which accept the shared keywords `flags`, `tasks`, `tune` and `prewarm` (see
+[`make_workspace`](@ref)) and ignore those they have no use for;
 otherwise the fallback [`MultiscaleTransformsBase.DefaultWorkspace`](@ref)
 serves.  A transform with subbands of different sizes returns a
 [`SubbandVector`](@ref) from `similar_coefficients` and gets `synthesize`'s

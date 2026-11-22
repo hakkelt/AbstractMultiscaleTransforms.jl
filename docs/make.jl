@@ -11,8 +11,12 @@ makedocs(;
     format = Documenter.HTML(; canonical = "https://hakkelt.github.io/MultiscaleTransformsBase.jl"),
     pages = [
         "Home" => "index.md",
-        "Implementing a transform" => "implementing.md",
-        "API Reference" => "api.md",
+        "How-to guides" => [
+            "Use a transform" => "howto/use.md",
+            "Implement a transform" => "howto/implement.md",
+        ],
+        "Explanation" => ["Concepts" => "explanation/concepts.md"],
+        "Reference" => ["API reference" => "api.md"],
     ],
     checkdocs = :public,
 )

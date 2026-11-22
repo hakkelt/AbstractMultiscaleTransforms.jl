@@ -1,4 +1,7 @@
-# API Reference
+# API reference
+
+Every public name of MultiscaleTransformsBase. Names listed with the
+`MultiscaleTransformsBase.` prefix are public but not exported.
 
 ```@docs
 MultiscaleTransformsBase

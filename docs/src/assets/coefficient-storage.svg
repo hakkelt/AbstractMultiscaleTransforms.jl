@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="430" viewBox="0 0 700 430" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <style>
+    .title { font-size: 15px; font-weight: bold; }
+    .small { font-size: 12px; }
+    .code { font-family: "DejaVu Sans Mono", Menlo, monospace; font-size: 12px; }
+    .data { fill: #e8e8e8; stroke: #444; }
+    .low { fill: #9ecae1; stroke: #2b5d84; }
+    .det { fill: #fdd0a2; stroke: #a0522d; }
+    .arrow { stroke: #333; stroke-width: 1.5; fill: none; marker-end: url(#head); }
+  </style>
+  <defs>
+    <marker id="head" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 z" fill="#333"/>
+    </marker>
+  </defs>
+  <rect width="700" height="430" fill="white"/>
+
+  <!-- Stacked coefficients -->
+  <text x="20" y="28" class="title">Stacked: every subband has the size of x</text>
+  <rect x="20" y="50" width="80" height="80" class="data"/>
+  <text x="60" y="95" text-anchor="middle">x</text>
+  <text x="60" y="150" text-anchor="middle" class="small">size (8, 8)</text>
+  <path d="M110,90 L180,90" class="arrow"/>
+  <text x="145" y="80" text-anchor="middle" class="code">analyze</text>
+  <rect x="195" y="50" width="80" height="80" class="low"/>
+  <rect x="295" y="50" width="80" height="80" class="det"/>
+  <rect x="395" y="50" width="80" height="80" class="det"/>
+  <rect x="495" y="50" width="80" height="80" class="det"/>
+  <text x="235" y="95" text-anchor="middle">1</text>
+  <text x="335" y="95" text-anchor="middle">2</text>
+  <text x="435" y="95" text-anchor="middle">3</text>
+  <text x="535" y="95" text-anchor="middle">4</text>
+  <text x="235" y="150" text-anchor="middle" class="small">lowpass</text>
+  <text x="435" y="150" text-anchor="middle" class="small">detail subbands</text>
+  <text x="195" y="178" class="small">c is one array of size (8, 8, 4); subband i is the slice c[:, :, i]</text>
+
+  <line x1="20" y1="200" x2="680" y2="200" stroke="#bbb"/>
+
+  <!-- SubbandVector -->
+  <text x="20" y="232" class="title">SubbandVector: subbands of different sizes</text>
+  <rect x="20" y="255" width="80" height="80" class="data"/>
+  <text x="60" y="300" text-anchor="middle">x</text>
+  <text x="60" y="355" text-anchor="middle" class="small">size (8, 8)</text>
+  <path d="M110,295 L180,295" class="arrow"/>
+  <text x="145" y="285" text-anchor="middle" class="code">analyze</text>
+  <rect x="195" y="295" width="20" height="20" class="low"/>
+  <rect x="230" y="275" width="40" height="40" class="det"/>
+  <rect x="285" y="255" width="80" height="80" class="det"/>
+  <text x="205" y="333" text-anchor="middle" class="small">(2, 2)</text>
+  <text x="250" y="333" text-anchor="middle" class="small">(4, 4)</text>
+  <text x="325" y="352" text-anchor="middle" class="small">(8, 8)</text>
+  <text x="205" y="290" text-anchor="middle" class="small">1</text>
+  <text x="250" y="270" text-anchor="middle" class="small">2</text>
+  <text x="325" y="300" text-anchor="middle">3</text>
+
+  <text x="395" y="270" class="small">stored one after another in</text>
+  <text x="395" y="286" class="small">one vector of 4 + 16 + 64 = 84</text>
+  <text x="395" y="302" class="small">entries; the SubbandLayout</text>
+  <text x="395" y="318" class="small">records each subband's size</text>
+  <text x="395" y="334" class="small">and range</text>
+
+  <rect x="150" y="372" width="24" height="22" class="low"/>
+  <rect x="174" y="372" width="96" height="22" class="det"/>
+  <rect x="270" y="372" width="384" height="22" class="det"/>
+  <text x="162" y="414" text-anchor="middle" class="code">1:4</text>
+  <text x="222" y="414" text-anchor="middle" class="code">5:20</text>
+  <text x="462" y="414" text-anchor="middle" class="code">21:84</text>
+  <text x="20" y="388" class="small">storage vector</text>
+</svg>

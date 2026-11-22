@@ -1,61 +1,60 @@
 # MultiscaleTransformsBase.jl
 
-An interface for multiscale transforms — wavelets, contourlets, surfacelets,
-shearlets — so that code using one can switch to another by changing the
-transform object only.  The package defines no transform itself; the transform
-packages implement it:
+MultiscaleTransformsBase.jl is a common interface for multiscale transforms such
+as wavelets, contourlets, surfacelets and shearlets. A multiscale transform
+splits an array into *subbands*: a lowpass subband with the coarse content, and
+detail subbands, each holding one scale (and, for directional transforms, one
+direction). Every transform that implements the interface is used through the
+same functions, so code written for one works with another by changing only
+the transform object.
 
-- [Contourlets.jl](https://github.com/hakkelt/Contourlets.jl): contourlet,
-  nonsubsampled and translation-invariant contourlet transforms (2-D);
-- [Surfacelets.jl](https://github.com/hakkelt/Surfacelets.jl): decimated and
-  nonsubsampled surfacelet transforms (3-D);
-- [Shearlets.jl](https://github.com/hakkelt/Shearlets.jl): band-limited,
-  compactly supported and nonsubsampled shearlets (2-D and 3-D).
+The package defines no transform itself. These packages implement it and
+re-export its names:
 
-## Using a transform
+- [Contourlets.jl](https://github.com/hakkelt/Contourlets.jl): 2-D contourlet
+  transforms (`CT`, `NSCT`, `TICT`, `STICT`).
+- [Surfacelets.jl](https://github.com/hakkelt/Surfacelets.jl): 3-D surfacelet
+  transforms (`Surfacelet`, `NSSurfacelet`).
+- [Shearlets.jl](https://github.com/hakkelt/Shearlets.jl): 2-D and 3-D
+  shearlet transforms (`BandlimitedShearlets`, `NSSTShearlets`,
+  `CompactShearlets`).
 
-A transform is a value holding its parameters.  [`analyze`](@ref) computes the
-coefficients, [`synthesize`](@ref) reconstructs the data:
+## Installation
 
-```julia
-using Shearlets                       # re-exports analyze, synthesize, ...
-t = BandlimitedShearlets(scales = 3)
-c = analyze(t, x)                     # an array
-x̂ = synthesize(t, c)                 # ≈ x
+The package is not registered yet. If you use one of the transform packages
+above, follow its installation instructions; they install this package too.
+To work with the interface alone, clone it and develop it into your
+environment:
+
+```bash
+git clone https://github.com/hakkelt/MultiscaleTransformsBase.jl MultiscaleTransformsBase
 ```
 
-Coefficients are arrays, so they broadcast and work with `norm`, `dot` and
-the in-place `LinearAlgebra` operations an iterative solver needs
-(`soft = sign.(c) .* max.(abs.(c) .- λ, 0)`).  Transforms whose subbands all
-have the size of the data stack them along a trailing axis, giving an array of
-size `(size(x)..., n)`; transforms with subbands of different sizes return a
-[`SubbandVector`](@ref).  Either way [`subband(t, c, i)`](@ref subband) is a
-view of subband `i` (subband 1 is the lowpass), [`nsubbands`](@ref) counts
-them and [`subband_layout`](@ref) describes them.
-
-## Repeated calls
-
-A workspace holds what a transform precomputes for one data size, element type
-and device (filter responses, FFT plans, buffers):
-
 ```julia
-ws = make_workspace(t, x)             # or make_workspace(t, Float32, (256, 256))
-c = similar_coefficients(t, x)
-for k in 1:100
-    analyze!(c, t, x; workspace = ws) # or analyze!(c, ws, x)
-    # ...
-    synthesize!(x, t, c; workspace = ws)
-end
+using Pkg
+Pkg.develop(path = "MultiscaleTransformsBase")
 ```
 
-A workspace serves one call at a time; give each task its own.  Every call
-accepts `threaded = true`/`false` to ask for or against threads, and
-`nothing` (the default) for the transform's own choice.
+## Example
 
-## Streaming
+With Shearlets.jl installed:
 
-Where [`MultiscaleTransformsBase.supports_streaming(t)`](@ref
-MultiscaleTransformsBase.supports_streaming), `analyze(f, t, x)` hands each
-subband to `f(i, band)` instead of storing all of them, and
-`synthesize!(f, x, t)` asks `f(i)` for them — for data whose coefficients do
-not fit in memory.
+```julia
+using Shearlets
+
+x = randn(256, 256)
+t = BandlimitedShearlets(scales = 3)   # the transform: its parameters only
+c = analyze(t, x)                      # coefficients, an array
+subband(t, c, 1)                       # the lowpass subband, a view into c
+synthesize(t, c) ≈ x                   # true
+```
+
+## Where to go next
+
+- [Use a transform](@ref): analysis, synthesis, subbands, workspaces, threads,
+  streaming and GPU arrays.
+- [Implement a transform](@ref): add the interface to a new transform and run
+  the conformance tests.
+- [Concepts](@ref): transforms, workspaces and the two ways coefficients are
+  stored.
+- [API reference](@ref): every public name.

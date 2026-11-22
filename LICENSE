@@ -19,19 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
---------------------------------------------------------------------------------
-
-THIRD-PARTY NOTICES
-
-This package contains no source code from other software.  It implements
-published methods, each cited in the source file that implements it:
-
-* CDF 9/7 filters: A. Cohen, I. Daubechies and J.-C. Feauveau, "Biorthogonal
-  bases of compactly supported wavelets", Commun. Pure Appl. Math. 45(5), 1992,
-  with the coefficients of JPEG 2000 Part 1 (ISO/IEC 15444-1).
-* À trous filtering: M. Holschneider, R. Kronland-Martinet, J. Morlet and
-  Ph. Tchamitchian, "A real-time algorithm for signal analysis with the help of
-  the wavelet transform", in Wavelets, Time-Frequency Methods and Phase Space,
-  Springer, 1989; M. J. Shensa, "The discrete wavelet transform: wedding the à
-  trous and Mallat algorithms", IEEE Trans. Signal Process. 40(10), 1992.

@@ -49,12 +49,3 @@ subband(t, c, 1)                       # the lowpass subband, a view into c
 synthesize(t, c) ≈ x                   # true
 ```
 
-## Where to go next
-
-- [Use a transform](@ref): analysis, synthesis, subbands, workspaces, threads,
-  streaming and GPU arrays.
-- [Implement a transform](@ref): add the interface to a new transform and run
-  the conformance tests.
-- [Concepts](@ref): transforms, workspaces and the two ways coefficients are
-  stored.
-- [API reference](@ref): every public name.

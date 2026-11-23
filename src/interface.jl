@@ -29,6 +29,22 @@ An implementation defines, for its transform type `T`:
 | `make_workspace(t::T, T, dims; ...)` / `make_workspace(t::T, x; ...)` | a [`DefaultWorkspace`](@ref) |
 | `nsubbands(t::T, dims)` | `length(subband_layout(t, dims))` |
 | `analyze(f, t::T, x; ...)`, `synthesize!(f, x, t::T; ...)` with `supports_streaming(t::T) = true` | not supported |
+
+Every implementation also follows these conventions;
+[`Testing.test_transform`](@ref MultiscaleTransformsBase.Testing.test_transform)
+checks most of them:
+
+- The transform holds every parameter, is immutable, and two transforms with
+  equal parameters are `==` and have equal `hash`.
+- Every verb accepts the keywords `workspace` and `threaded`.  A method that
+  receives a workspace checks it with [`check_workspace`](@ref) before using it.
+- Wrong input throws before any work: a `DimensionMismatch` for a wrong size,
+  an `ArgumentError` for another wrong argument, each with a message.
+- Complex data is transformed as its real and imaginary parts, so that
+  `analyze(t, x + im * y) ≈ analyze(t, x) + im * analyze(t, y)` for real `x`
+  and `y`.
+- The implementing package lists the interface's exported names in its own
+  `export`, so that `using` it is enough.
 """
 abstract type AbstractMultiscaleTransform end
 
@@ -47,6 +63,13 @@ does not match the workspace throws (see [`check_workspace`](@ref)).
 
 A workspace can stand in for its transform: `analyze(ws, x)` is
 `analyze(transform(ws), x; workspace = ws)`, and likewise for the other verbs.
+
+A transform that has plans or buffers to reuse defines its own subtype, with
+methods for `transform`, `eltype` and `size`, and [`make_workspace`](@ref)
+methods for `make_workspace(t, T, dims)` and, if the workspace depends on the
+array type (a GPU array, say), for `make_workspace(t, x)`.  Both accept the
+shared keywords listed there.  A transform without one gets a
+[`DefaultWorkspace`](@ref).
 """
 abstract type AbstractTransformWorkspace end
 

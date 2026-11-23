@@ -37,7 +37,7 @@ The interface separates three kinds of object:
 Subband 1 is always the lowpass; [`subband_layout`](@ref) describes the others
 in order. Transforms store their subbands in one of two ways:
 
-![Stacked coefficients: four subbands of size 8×8 in one 8×8×4 array. SubbandVector: subbands of size 2×2, 4×4 and 8×8 stored one after another in a vector of 84 entries.](../assets/coefficient-storage.svg)
+![Stacked coefficients: four subbands of size 8×8 in one 8×8×4 array. SubbandVector: subbands of size 2×2, 4×4 and 8×8 stored one after another in a vector of 84 entries.](assets/coefficient-storage.svg)
 
 - **Stacked.** When every subband has the size of `x`, as in nonsubsampled and
   translation-invariant transforms, the coefficients are one array of size
@@ -75,6 +75,4 @@ implementation.
 
 ## Threads
 
-Every call takes a `threaded` keyword: `true` or `false` asks for or against
-threads, and `nothing` leaves the choice to the transform. Results do not
-depend on it beyond rounding.
+Results do not depend on the `threaded` keyword beyond rounding.

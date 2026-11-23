@@ -38,8 +38,7 @@ synthesize(t, c) ≈ x       # true
 ```
 
 The [documentation](https://hakkelt.github.io/MultiscaleTransformsBase.jl/dev/)
-explains how to use transforms, reuse workspaces and stream subbands, and how
-to implement the interface for a new transform and test it.
+describes the interface and how to implement it for a new transform.
 
 ## License
 

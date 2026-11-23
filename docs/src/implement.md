@@ -66,6 +66,12 @@ When subbands have different sizes, `similar_coefficients` returns a
 `subband(c, i)`. `synthesize` then reads the data size from the
 [`SubbandLayout`](@ref), so no `signal_size` method is needed.
 
+A critically sampled separable transform can instead pack its subbands as
+blocks of one array of the size of `x` (see [Concepts](concepts.md)):
+`similar_coefficients` returns `similar(x)`, `subband(t, c, i)` returns
+`view(c, ranges...)` with the index ranges of block `i`, and
+`signal_size(t, c)` is `size(c)`.
+
 A transform that precomputes plans or buffers adds its own workspace type (see
 [`AbstractTransformWorkspace`](@ref)); one that can produce or consume one
 subband at a time adds the streaming forms (see

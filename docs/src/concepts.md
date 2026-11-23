@@ -35,13 +35,20 @@ The interface separates three kinds of object:
 ## How coefficients are stored
 
 Subband 1 is always the lowpass; [`subband_layout`](@ref) describes the others
-in order. Transforms store their subbands in one of two ways:
+in order. Transforms store their subbands in one of three ways:
 
 ![Stacked coefficients: four subbands of size 8×8 in one 8×8×4 array. SubbandVector: subbands of size 2×2, 4×4 and 8×8 stored one after another in a vector of 84 entries.](assets/coefficient-storage.svg)
 
 - **Stacked.** When every subband has the size of `x`, as in nonsubsampled and
   translation-invariant transforms, the coefficients are one array of size
   `(size(x)..., n)` and subband `i` is its slice `i` along the last axis.
+- **Packed.** When the transform is critically sampled and separable, as the
+  discrete wavelet transform is, the subbands can share one array of the size
+  of `x`, each a block of it: the lowpass in the leading `size(x) .÷ 2^L`
+  block for `L` levels, and the details of each level in the blocks around it.
+  This is the layout of Wavelets.jl's `dwt` in two and three dimensions, and it
+  shows all subbands as one image. A block is not contiguous in memory, so
+  [`subband`](@ref) returns a strided view.
 - **[`SubbandVector`](@ref).** When subbands have different sizes, as in
   decimated transforms, they are stored one after another in a single vector.
   A [`SubbandLayout`](@ref) records each subband's size and range in that
@@ -49,7 +56,7 @@ in order. Transforms store their subbands in one of two ways:
   `LinearAlgebra` operations run on the storage vector as a whole, so they
   work on GPU arrays without indexing single elements.
 
-In both cases [`subband`](@ref) returns a view of one subband with its own
+In every case [`subband`](@ref) returns a view of one subband with its own
 shape, and writing to the view changes the coefficients.
 
 ## Synthesis, inverse and adjoint

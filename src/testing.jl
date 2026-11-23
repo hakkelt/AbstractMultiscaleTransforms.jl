@@ -33,8 +33,11 @@ Run the interface's conformance tests for transform `t` on data `x`, inside a
   once, so that FFT planning between calls cannot change the rounding.
 """
 function test_transform(t, x; kwargs...)
-    Base.get_extension(parentmodule(@__MODULE__), :AbstractMultiscaleTransformsTestExt) === nothing &&
+    if Base.get_extension(parentmodule(@__MODULE__), :AbstractMultiscaleTransformsTestExt) === nothing
+        # A missing package extension has no dedicated exception type.
+        # lint-disable-next-line: Use custom exception instead of the generic
         error("`test_transform` is defined once the Test standard library is loaded: run `using Test` first.")
+    end
     throw(MethodError(test_transform, (t, x)))
 end
 

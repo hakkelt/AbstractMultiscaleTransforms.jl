@@ -78,8 +78,9 @@ abstract type AbstractTransformWorkspace end
 
 Analysis (forward) transform of the array `x` by the transform `t`.  The
 coefficients `c` are an array: transforms whose subbands all have the size of
-`x` stack them into one array of size `(size(x)..., n)`; others return a
-[`SubbandVector`](@ref) or a package-specific array.  Read subbands with
+`x` stack them into one array of size `(size(x)..., n)`; critically sampled
+separable transforms may pack them as blocks of one array of the size of `x`;
+others return a [`SubbandVector`](@ref) or a package-specific array.  Read subbands with
 [`subband`](@ref); [`synthesize`](@ref) inverts the transform.
 
 `workspace` is a workspace from [`make_workspace`](@ref) matching `t` and

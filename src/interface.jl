@@ -31,8 +31,7 @@ An implementation defines, for its transform type `T`:
 | `analyze(f, t::T, x; ...)`, `synthesize!(f, x, t::T; ...)` with `supports_streaming(t::T) = true` | not supported |
 
 Every implementation also follows these conventions;
-[`Testing.test_transform`](@ref MultiscaleTransformsBase.Testing.test_transform)
-checks most of them:
+`AbstractMultiscaleTransforms.Testing.test_transform` checks most of them:
 
 - The transform holds every parameter, is immutable, and two transforms with
   equal parameters are `==` and have equal `hash`.

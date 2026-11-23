@@ -1,10 +1,10 @@
 # API reference
 
-Every public name of MultiscaleTransformsBase. Names listed with the
-`MultiscaleTransformsBase.` prefix are public but not exported.
+Every public name of AbstractMultiscaleTransforms. Names listed with the
+`AbstractMultiscaleTransforms.` prefix are public but not exported.
 
 ```@docs
-MultiscaleTransformsBase
+AbstractMultiscaleTransforms
 ```
 
 ## Transforms and verbs
@@ -23,8 +23,8 @@ synthesize!
 AbstractTransformWorkspace
 make_workspace
 transform
-MultiscaleTransformsBase.DefaultWorkspace
-MultiscaleTransformsBase.check_workspace
+AbstractMultiscaleTransforms.DefaultWorkspace
+AbstractMultiscaleTransforms.check_workspace
 ```
 
 ## Coefficients
@@ -34,7 +34,7 @@ similar_coefficients
 subband_layout
 nsubbands
 subband
-MultiscaleTransformsBase.signal_size
+AbstractMultiscaleTransforms.signal_size
 SubbandVector
 SubbandLayout
 ```
@@ -42,12 +42,12 @@ SubbandLayout
 ## Streaming
 
 ```@docs
-MultiscaleTransformsBase.supports_streaming
+AbstractMultiscaleTransforms.supports_streaming
 ```
 
 ## Conformance tests
 
 ```@docs
-MultiscaleTransformsBase.Testing
-MultiscaleTransformsBase.Testing.test_transform
+AbstractMultiscaleTransforms.Testing
+AbstractMultiscaleTransforms.Testing.test_transform
 ```

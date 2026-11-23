@@ -1,6 +1,6 @@
 # Concepts
 
-This page explains the objects of the MultiscaleTransformsBase interface and the
+This page explains the objects of the AbstractMultiscaleTransforms interface and the
 properties all implementations share. The functions themselves are documented
 in the [API reference](@ref).
 
@@ -70,7 +70,7 @@ The filters of the implementing packages are real. Complex data is transformed
 as its real and imaginary parts, so every transform is real-linear:
 `analyze(t, x + im * y) ≈ analyze(t, x) + im * analyze(t, y)` for real `x`
 and `y`. The conformance tests in
-[`MultiscaleTransformsBase.Testing`](@ref) check this for every
+[`AbstractMultiscaleTransforms.Testing`](@ref) check this for every
 implementation.
 
 ## Threads

@@ -1,12 +1,12 @@
-name = "MultiscaleTransformsBaseDocs"
+name = "AbstractMultiscaleTransformsDocs"
 
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-MultiscaleTransformsBase = "bb7a9938-a16c-4a85-ac5b-efa2b8f5fd01"
+AbstractMultiscaleTransforms = "bb7a9938-a16c-4a85-ac5b-efa2b8f5fd01"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [sources]
-MultiscaleTransformsBase = {path = ".."}
+AbstractMultiscaleTransforms = {path = ".."}
 
 [compat]
 Documenter = "1.9"

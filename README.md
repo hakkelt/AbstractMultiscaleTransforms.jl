@@ -1,4 +1,4 @@
-# MultiscaleTransformsBase.jl
+# AbstractMultiscaleTransforms.jl
 
 A common interface for multiscale transforms such as wavelets, contourlets,
 surfacelets and shearlets: transform objects, the functions `analyze` and
@@ -18,12 +18,12 @@ a dependency; follow their instructions. To work with the interface alone,
 clone it and develop it into your environment:
 
 ```bash
-git clone https://github.com/hakkelt/MultiscaleTransformsBase.jl MultiscaleTransformsBase
+git clone https://github.com/hakkelt/AbstractMultiscaleTransforms.jl AbstractMultiscaleTransforms
 ```
 
 ```julia
 using Pkg
-Pkg.develop(path = "MultiscaleTransformsBase")
+Pkg.develop(path = "AbstractMultiscaleTransforms")
 ```
 
 ## Example
@@ -37,7 +37,7 @@ c = analyze(t, x)          # an array; subband(t, c, i) is a view of subband i
 synthesize(t, c) ≈ x       # true
 ```
 
-The [documentation](https://hakkelt.github.io/MultiscaleTransformsBase.jl/dev/)
+The [documentation](https://hakkelt.github.io/AbstractMultiscaleTransforms.jl/dev/)
 describes the interface and how to implement it for a new transform.
 
 ## License

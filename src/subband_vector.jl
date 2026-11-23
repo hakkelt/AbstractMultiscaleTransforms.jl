@@ -49,7 +49,7 @@ a device and keep the layout.  Operands of one operation must share a layout.
 every GPU array package does).
 
 ```jldoctest
-julia> using MultiscaleTransformsBase
+julia> using AbstractMultiscaleTransforms
 
 julia> layout = SubbandLayout([(2, 2), (4, 4)], (4, 4));
 

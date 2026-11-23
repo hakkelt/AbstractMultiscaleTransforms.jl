@@ -1,4 +1,4 @@
-name = "MultiscaleTransformsBase"
+name = "AbstractMultiscaleTransforms"
 uuid = "bb7a9938-a16c-4a85-ac5b-efa2b8f5fd01"
 version = "0.1.0"
 authors = ["Tamás Hakkel"]
@@ -12,8 +12,8 @@ Adapt = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [extensions]
-MultiscaleTransformsBaseAdaptExt = "Adapt"
-MultiscaleTransformsBaseTestExt = "Test"
+AbstractMultiscaleTransformsAdaptExt = "Adapt"
+AbstractMultiscaleTransformsTestExt = "Test"
 
 [workspace]
 projects = ["test", "docs"]

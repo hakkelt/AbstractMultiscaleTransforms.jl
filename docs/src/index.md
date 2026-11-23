@@ -1,6 +1,6 @@
-# MultiscaleTransformsBase.jl
+# AbstractMultiscaleTransforms.jl
 
-MultiscaleTransformsBase.jl is a common interface for multiscale transforms such
+AbstractMultiscaleTransforms.jl is a common interface for multiscale transforms such
 as wavelets, contourlets, surfacelets and shearlets. A multiscale transform
 splits an array into *subbands*: a lowpass subband with the coarse content, and
 detail subbands, each holding one scale (and, for directional transforms, one
@@ -27,12 +27,12 @@ To work with the interface alone, clone it and develop it into your
 environment:
 
 ```bash
-git clone https://github.com/hakkelt/MultiscaleTransformsBase.jl MultiscaleTransformsBase
+git clone https://github.com/hakkelt/AbstractMultiscaleTransforms.jl AbstractMultiscaleTransforms
 ```
 
 ```julia
 using Pkg
-Pkg.develop(path = "MultiscaleTransformsBase")
+Pkg.develop(path = "AbstractMultiscaleTransforms")
 ```
 
 ## Example

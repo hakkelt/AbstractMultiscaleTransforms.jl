@@ -1,7 +1,7 @@
 # Implement a transform
 
 This page shows how to make a new transform usable through the
-MultiscaleTransformsBase interface and how to check it with the conformance
+AbstractMultiscaleTransforms interface and how to check it with the conformance
 tests. The full contract, the required and optional methods and the conventions
 every implementation follows, is in the docstrings of
 [`AbstractMultiscaleTransform`](@ref) and [`AbstractTransformWorkspace`](@ref).
@@ -18,10 +18,10 @@ the coefficients are one array of size `(size(x)..., 2)`, with subband `i`
 the slice `i` along the last axis.
 
 ```@example twoband
-using MultiscaleTransformsBase
-import MultiscaleTransformsBase: analyze!, synthesize!, similar_coefficients,
+using AbstractMultiscaleTransforms
+import AbstractMultiscaleTransforms: analyze!, synthesize!, similar_coefficients,
     subband_layout, subband, signal_size
-using MultiscaleTransformsBase: check_workspace
+using AbstractMultiscaleTransforms: check_workspace
 
 struct TwoBand <: AbstractMultiscaleTransform end
 
@@ -56,9 +56,9 @@ size(c), synthesize(TwoBand(), c) ≈ x
 
 The interface supplies the rest: `analyze` and `synthesize` allocate and call
 the in-place methods, `nsubbands` counts the layout, and `make_workspace`
-returns a [`MultiscaleTransformsBase.DefaultWorkspace`](@ref), which records
+returns a [`AbstractMultiscaleTransforms.DefaultWorkspace`](@ref), which records
 the transform, element type and size so that
-[`MultiscaleTransformsBase.check_workspace`](@ref) can reject a mismatched
+[`AbstractMultiscaleTransforms.check_workspace`](@ref) can reject a mismatched
 workspace.
 
 When subbands have different sizes, `similar_coefficients` returns a
@@ -69,17 +69,17 @@ When subbands have different sizes, `similar_coefficients` returns a
 A transform that precomputes plans or buffers adds its own workspace type (see
 [`AbstractTransformWorkspace`](@ref)); one that can produce or consume one
 subband at a time adds the streaming forms (see
-[`MultiscaleTransformsBase.supports_streaming`](@ref)).
+[`AbstractMultiscaleTransforms.supports_streaming`](@ref)).
 
 ## Run the conformance tests
 
-[`MultiscaleTransformsBase.Testing.test_transform`](@ref) runs the interface's
+[`AbstractMultiscaleTransforms.Testing.test_transform`](@ref) runs the interface's
 checks in a `@testset`. It needs the `Test` standard library loaded. Run it on
 real and complex data in the package's test suite:
 
 ```@example twoband
 using Test
-using MultiscaleTransformsBase.Testing: test_transform
+using AbstractMultiscaleTransforms.Testing: test_transform
 
 test_transform(TwoBand(), randn(8, 6); wrong_size = (4, 6))
 test_transform(TwoBand(), randn(ComplexF64, 8, 6))

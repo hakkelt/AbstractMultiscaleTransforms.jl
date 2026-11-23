@@ -1,6 +1,6 @@
-module MultiscaleTransformsBaseAdaptExt
+module AbstractMultiscaleTransformsAdaptExt
 
-using MultiscaleTransformsBase: SubbandVector
+using AbstractMultiscaleTransforms: SubbandVector
 using Adapt: Adapt
 
 Adapt.adapt_structure(to, c::SubbandVector) = SubbandVector(Adapt.adapt(to, c.data), c.layout)

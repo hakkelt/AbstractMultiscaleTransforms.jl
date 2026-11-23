@@ -1,14 +1,14 @@
-using Documenter, MultiscaleTransformsBase
+using Documenter, AbstractMultiscaleTransforms
 using Documenter: Remotes
 
-DocMeta.setdocmeta!(MultiscaleTransformsBase, :DocTestSetup, :(using MultiscaleTransformsBase); recursive = true)
+DocMeta.setdocmeta!(AbstractMultiscaleTransforms, :DocTestSetup, :(using AbstractMultiscaleTransforms); recursive = true)
 
 makedocs(;
-    modules = [MultiscaleTransformsBase],
-    sitename = "MultiscaleTransformsBase.jl",
-    repo = Remotes.GitHub("hakkelt", "MultiscaleTransformsBase.jl"),
+    modules = [AbstractMultiscaleTransforms],
+    sitename = "AbstractMultiscaleTransforms.jl",
+    repo = Remotes.GitHub("hakkelt", "AbstractMultiscaleTransforms.jl"),
     authors = "Tamás Hakkel",
-    format = Documenter.HTML(; canonical = "https://hakkelt.github.io/MultiscaleTransformsBase.jl"),
+    format = Documenter.HTML(; canonical = "https://hakkelt.github.io/AbstractMultiscaleTransforms.jl"),
     pages = [
         "Home" => "index.md",
         "Implement a transform" => "implement.md",
@@ -18,4 +18,4 @@ makedocs(;
     checkdocs = :public,
 )
 
-deploydocs(; repo = "github.com/hakkelt/MultiscaleTransformsBase.jl", devbranch = "master")
+deploydocs(; repo = "github.com/hakkelt/AbstractMultiscaleTransforms.jl", devbranch = "master")

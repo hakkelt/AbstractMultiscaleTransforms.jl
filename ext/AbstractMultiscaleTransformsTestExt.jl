@@ -1,11 +1,11 @@
-module MultiscaleTransformsBaseTestExt
+module AbstractMultiscaleTransformsTestExt
 
 using Test: @test, @testset, @test_throws
 using LinearAlgebra: LinearAlgebra
-using MultiscaleTransformsBase: MultiscaleTransformsBase, AbstractMultiscaleTransform,
+using AbstractMultiscaleTransforms: AbstractMultiscaleTransforms, AbstractMultiscaleTransform,
     analyze, analyze!, synthesize, synthesize!, make_workspace, transform, similar_coefficients,
     subband_layout, nsubbands, subband, supports_streaming
-import MultiscaleTransformsBase.Testing: test_transform
+import AbstractMultiscaleTransforms.Testing: test_transform
 
 function test_transform(
         t::AbstractMultiscaleTransform, x::AbstractArray;

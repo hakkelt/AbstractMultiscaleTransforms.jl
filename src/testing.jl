@@ -1,8 +1,8 @@
 """
-    MultiscaleTransformsBase.Testing
+    AbstractMultiscaleTransforms.Testing
 
 Conformance tests for implementations of the interface; see
-[`test_transform`](@ref MultiscaleTransformsBase.Testing.test_transform).
+[`test_transform`](@ref AbstractMultiscaleTransforms.Testing.test_transform).
 Its method is defined once the `Test` standard library is loaded.
 """
 module Testing
@@ -33,7 +33,7 @@ Run the interface's conformance tests for transform `t` on data `x`, inside a
   once, so that FFT planning between calls cannot change the rounding.
 """
 function test_transform(t, x; kwargs...)
-    Base.get_extension(parentmodule(@__MODULE__), :MultiscaleTransformsBaseTestExt) === nothing &&
+    Base.get_extension(parentmodule(@__MODULE__), :AbstractMultiscaleTransformsTestExt) === nothing &&
         error("`test_transform` is defined once the Test standard library is loaded: run `using Test` first.")
     throw(MethodError(test_transform, (t, x)))
 end

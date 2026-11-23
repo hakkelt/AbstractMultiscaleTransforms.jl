@@ -1,15 +1,15 @@
 @testitem "Aqua" tags = [:quality] begin
     using Aqua
-    Aqua.test_all(MultiscaleTransformsBase)
+    Aqua.test_all(AbstractMultiscaleTransforms)
 end
 
 @testitem "ExplicitImports" tags = [:quality] begin
     using ExplicitImports
-    @test check_no_implicit_imports(MultiscaleTransformsBase) === nothing
-    @test check_no_stale_explicit_imports(MultiscaleTransformsBase) === nothing
-    @test check_all_explicit_imports_via_owners(MultiscaleTransformsBase) === nothing
-    @test check_all_qualified_accesses_via_owners(MultiscaleTransformsBase) === nothing
-    @test check_no_self_qualified_accesses(MultiscaleTransformsBase) === nothing
+    @test check_no_implicit_imports(AbstractMultiscaleTransforms) === nothing
+    @test check_no_stale_explicit_imports(AbstractMultiscaleTransforms) === nothing
+    @test check_all_explicit_imports_via_owners(AbstractMultiscaleTransforms) === nothing
+    @test check_all_qualified_accesses_via_owners(AbstractMultiscaleTransforms) === nothing
+    @test check_no_self_qualified_accesses(AbstractMultiscaleTransforms) === nothing
 end
 
 @testitem "Code complexity" tags = [:quality] begin
@@ -17,7 +17,7 @@ end
     # No definition in src/ or ext/ may exceed these limits: CodeComplexity's
     # defaults (10 and 15), or the package's most complex definition where that
     # is higher.
-    root = pkgdir(MultiscaleTransformsBase)
+    root = pkgdir(AbstractMultiscaleTransforms)
     dirs = filter(isdir, joinpath.(root, ("src", "ext")))
     for (metric, limit) in ((CyclomaticComplexity(), 10), (CognitiveComplexity(), 15))
         over = [

@@ -1,5 +1,5 @@
 @testitem "conformance: stacked toy transform" tags = [:interface] setup = [ToyTransforms] begin
-    using MultiscaleTransformsBase.Testing: test_transform
+    using AbstractMultiscaleTransforms.Testing: test_transform
     using .ToyTransforms: Split
     test_transform(Split(3), randn(8, 6); wrong_size = (4, 6))
     test_transform(Split(2), randn(ComplexF64, 5, 4, 3); exact_real_linear = true)
@@ -7,14 +7,14 @@
 end
 
 @testitem "conformance: ragged toy transform" tags = [:interface] setup = [ToyTransforms] begin
-    using MultiscaleTransformsBase.Testing: test_transform
+    using AbstractMultiscaleTransforms.Testing: test_transform
     using .ToyTransforms: Haar
     test_transform(Haar(3), randn(32); wrong_size = (16,))
     test_transform(Haar(2), randn(ComplexF64, 16); exact_real_linear = true)
 end
 
 @testitem "defaults between call forms" tags = [:interface] setup = [ToyTransforms] begin
-    using MultiscaleTransformsBase: DefaultWorkspace, check_workspace, signal_size
+    using AbstractMultiscaleTransforms: DefaultWorkspace, check_workspace, signal_size
     using .ToyTransforms: Split, Haar
     t = Split(2)
     x = randn(4, 4)
@@ -35,13 +35,13 @@ end
     h = Haar(1)
     c = analyze(h, randn(8))
     @test size(synthesize(h, c)) == (8,)          # size from the SubbandVector's layout
-    @test !MultiscaleTransformsBase.supports_streaming(h)
+    @test !AbstractMultiscaleTransforms.supports_streaming(h)
     # The toy transforms' methods (e.g. `signal_size(::Split, ::AbstractArray)`)
     # must not be ambiguous with the interface's own.
-    @test isempty(Test.detect_ambiguities(MultiscaleTransformsBase, ToyTransforms))
+    @test isempty(Test.detect_ambiguities(AbstractMultiscaleTransforms, ToyTransforms))
 end
 
 @testitem "test_transform needs a transform and an array" begin
-    using MultiscaleTransformsBase.Testing: test_transform
+    using AbstractMultiscaleTransforms.Testing: test_transform
     @test_throws MethodError test_transform(1, 2)
 end

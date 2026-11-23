@@ -1,7 +1,7 @@
 @testmodule ToyTransforms begin
-    using MultiscaleTransformsBase
-    using MultiscaleTransformsBase: check_workspace, DefaultWorkspace
-    import MultiscaleTransformsBase: analyze!, synthesize!, similar_coefficients, subband_layout, subband,
+    using AbstractMultiscaleTransforms
+    using AbstractMultiscaleTransforms: check_workspace, DefaultWorkspace
+    import AbstractMultiscaleTransforms: analyze!, synthesize!, similar_coefficients, subband_layout, subband,
         supports_streaming, analyze, make_workspace, signal_size
 
     # `n` equal subbands, each `x / n`, stacked along a trailing axis; the

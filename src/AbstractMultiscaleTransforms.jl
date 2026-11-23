@@ -1,5 +1,5 @@
 """
-    MultiscaleTransformsBase
+    AbstractMultiscaleTransforms
 
 The interface shared by multiscale transform packages (contourlets, surfacelets,
 shearlets, wavelets, ...): transform objects, the verbs [`analyze`](@ref) and
@@ -9,9 +9,9 @@ coefficients.  It defines no transform of its own.
 A package implementing a transform depends on this one, subtypes
 [`AbstractMultiscaleTransform`](@ref), adds methods to the verbs and accessors,
 re-exports them, and checks its types with
-[`MultiscaleTransformsBase.Testing.test_transform`](@ref).
+[`AbstractMultiscaleTransforms.Testing.test_transform`](@ref).
 """
-module MultiscaleTransformsBase
+module AbstractMultiscaleTransforms
 
 using Compat: @compat
 using LinearAlgebra: LinearAlgebra

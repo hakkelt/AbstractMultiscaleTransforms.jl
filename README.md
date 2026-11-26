@@ -1,5 +1,9 @@
 # AbstractMultiscaleTransforms.jl
 
+[![CI](https://github.com/hakkelt/AbstractMultiscaleTransforms.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/hakkelt/AbstractMultiscaleTransforms.jl/actions/workflows/CI.yml)
+[![Documentation](https://github.com/hakkelt/AbstractMultiscaleTransforms.jl/actions/workflows/documentation.yml/badge.svg)](https://hakkelt.github.io/AbstractMultiscaleTransforms.jl/dev/)
+[![Lint](https://github.com/hakkelt/AbstractMultiscaleTransforms.jl/actions/workflows/lint.yml/badge.svg)](https://github.com/hakkelt/AbstractMultiscaleTransforms.jl/actions/workflows/lint.yml)
+
 A common interface for multiscale transforms such as wavelets, contourlets,
 surfacelets and shearlets: transform objects, the functions `analyze` and
 `synthesize`, reusable workspaces, and array-valued coefficients with access to

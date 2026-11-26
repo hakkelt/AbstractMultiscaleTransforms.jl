@@ -13,6 +13,10 @@ contourlets, surfacelets and shearlets, of one direction. *Analysis*
 ([`analyze`](@ref)) computes the coefficients; *synthesis*
 ([`synthesize`](@ref)) computes the data back from them.
 
+The interface also serves other subband transforms, such as the uniform
+filter banks of the short-time Fourier transform and the MDCT, which split
+the frequencies into bands of equal width and have no lowpass subband.
+
 ## Transforms, workspaces and coefficients
 
 The interface separates three kinds of object:
@@ -34,8 +38,9 @@ The interface separates three kinds of object:
 
 ## How coefficients are stored
 
-Subband 1 is always the lowpass; [`subband_layout`](@ref) describes the others
-in order. Transforms store their subbands in one of three ways:
+In a multiscale transform, subband 1 is the lowpass; [`subband_layout`](@ref)
+describes every subband in order. Transforms store their subbands in one of
+three ways:
 
 ![Stacked coefficients: four subbands of size 8×8 in one 8×8×4 array. SubbandVector: subbands of size 2×2, 4×4 and 8×8 stored one after another in a vector of 84 entries.](assets/coefficient-storage.svg)
 
@@ -73,12 +78,17 @@ is the redundancy. Stacked transforms with `n` subbands have redundancy `n`.
 
 ## Complex data
 
-The filters of the implementing packages are real. Complex data is transformed
-as its real and imaginary parts, so every transform is real-linear:
+Every transform is linear over the complex numbers:
 `analyze(t, x + im * y) ≈ analyze(t, x) + im * analyze(t, y)` for real `x`
 and `y`. The conformance tests in
 [`AbstractMultiscaleTransforms.Testing`](@ref) check this for every
 implementation.
+
+Most transforms have real filters: real data gives real coefficients, and
+complex data is transformed as its real and imaginary parts. A transform with
+complex filters, such as a short-time Fourier transform or a complex steerable
+pyramid, gives complex coefficients for real data and declares this with
+[`AbstractMultiscaleTransforms.preserves_real`](@ref).
 
 ## Threads
 

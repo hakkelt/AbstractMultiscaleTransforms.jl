@@ -2,7 +2,7 @@
     using AbstractMultiscaleTransforms
     using AbstractMultiscaleTransforms: check_workspace, DefaultWorkspace
     import AbstractMultiscaleTransforms: analyze!, synthesize!, similar_coefficients, subband_layout, subband,
-        supports_streaming, analyze, make_workspace, signal_size
+        supports_streaming, preserves_real, analyze, make_workspace, signal_size
 
     # `n` equal subbands, each `x / n`, stacked along a trailing axis; the
     # synthesis sums them.  A stacked transform without a workspace of its own.
@@ -51,6 +51,40 @@
         for i in 1:t.n
             x .+= f(i)
         end
+        return x
+    end
+
+    # `n` stacked subbands `w_k .* x` with complex weights `w_k = cis(2πk/n)/√n`;
+    # the synthesis sums `conj(w_k) .* c_k`.  A Parseval frame with complex
+    # filters: real data gives complex coefficients.
+    struct Modulate <: AbstractMultiscaleTransform
+        n::Int
+    end
+
+    _weight(t::Modulate, k) = cis(2π * k / t.n) / sqrt(t.n)
+    preserves_real(::Modulate) = false
+    similar_coefficients(t::Modulate, x::AbstractArray) =
+        similar(x, complex(float(eltype(x))), (size(x)..., t.n))
+    subband_layout(t::Modulate, dims::Dims) = collect(1:t.n)
+    subband(::Modulate, c::AbstractArray, i::Integer) = selectdim(c, ndims(c), i)
+    signal_size(::Modulate, c::AbstractArray) = size(c)[1:(end - 1)]
+
+    function analyze!(c::AbstractArray, t::Modulate, x::AbstractArray; workspace = nothing, threaded = nothing)
+        _check(workspace, t, x)
+        size(c) == (size(x)..., t.n) || throw(DimensionMismatch("coefficients of size $(size(c)) do not fit"))
+        for k in 1:t.n
+            subband(t, c, k) .= _weight(t, k) .* x
+        end
+        return c
+    end
+
+    _as(::Type{T}, z) where {T <: Real} = real(z)
+    _as(::Type, z) = z
+
+    function synthesize!(x::AbstractArray, t::Modulate, c::AbstractArray; workspace = nothing, threaded = nothing)
+        _check(workspace, t, x)
+        s = sum(k -> conj(_weight(t, k)) .* subband(t, c, k), 1:t.n)
+        x .= _as.(eltype(x), s)
         return x
     end
 

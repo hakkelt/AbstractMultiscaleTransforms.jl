@@ -13,6 +13,23 @@ end
     test_transform(Haar(2), randn(ComplexF64, 16); exact_real_linear = true)
 end
 
+@testitem "conformance: complex-filter toy transform" tags = [:interface] setup = [ToyTransforms] begin
+    using AbstractMultiscaleTransforms.Testing: test_transform
+    using AbstractMultiscaleTransforms: preserves_real
+    using .ToyTransforms: Modulate, Split
+    using LinearAlgebra: norm
+    t = Modulate(3)
+    @test !preserves_real(t)
+    @test preserves_real(Split(2))
+    x = randn(6, 5)
+    c = analyze(t, x)
+    @test eltype(c) == ComplexF64
+    @test norm(c) ≈ norm(x)
+    test_transform(t, x; wrong_size = (4, 5))
+    test_transform(t, randn(ComplexF64, 6, 5))
+    test_transform(Modulate(2), randn(Float32, 7))
+end
+
 @testitem "defaults between call forms" tags = [:interface] setup = [ToyTransforms] begin
     using AbstractMultiscaleTransforms: DefaultWorkspace, check_workspace, signal_size
     using .ToyTransforms: Split, Haar

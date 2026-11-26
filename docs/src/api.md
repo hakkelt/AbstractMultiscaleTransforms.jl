@@ -45,6 +45,12 @@ SubbandLayout
 AbstractMultiscaleTransforms.supports_streaming
 ```
 
+## Element types
+
+```@docs
+AbstractMultiscaleTransforms.preserves_real
+```
+
 ## Conformance tests
 
 ```@docs

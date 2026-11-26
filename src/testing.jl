@@ -27,10 +27,13 @@ Run the interface's conformance tests for transform `t` on data `x`, inside a
 - the streaming forms, if `supports_streaming(t)`, give the same subbands and
   reconstruction;
 - a workspace for another size (`wrong_size`, when given) is rejected;
-- for complex `x`, the transform is real-linear:
-  `analyze(t, x) ≈ complex.(analyze(t, real(x)), analyze(t, imag(x)))`, exactly
-  (`==`) when `exact_real_linear`; each side runs through a workspace built
-  once, so that FFT planning between calls cannot change the rounding.
+- for real `x` and `preserves_real(t)`, the coefficients are real;
+- for complex `x`, the transform is linear over the complex numbers:
+  `analyze(t, x) ≈ analyze(t, real(x)) + im * analyze(t, imag(x))`, exactly
+  (`==`) when `exact_real_linear` (meaningful when `preserves_real(t)`, where
+  the right side is formed with `complex.`); each side runs through a
+  workspace built once, so that FFT planning between calls cannot change the
+  rounding.
 """
 function test_transform(t, x; kwargs...)
     if Base.get_extension(parentmodule(@__MODULE__), :AbstractMultiscaleTransformsTestExt) === nothing

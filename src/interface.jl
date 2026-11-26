@@ -18,7 +18,7 @@ An implementation defines, for its transform type `T`:
 | `analyze!(c, t::T, x; workspace, threaded)` | analysis into preallocated coefficients |
 | `synthesize!(x, t::T, c; workspace, threaded)` | synthesis into a preallocated array |
 | `similar_coefficients(t::T, x)` | uninitialised coefficients for data like `x` |
-| `subband_layout(t::T, dims)` | one descriptor per subband, lowpass first |
+| `subband_layout(t::T, dims)` | one descriptor per subband |
 | `subband(t::T, c, i)` | subband `i` of `c`, a view |
 
 | Optional | Default |
@@ -29,6 +29,7 @@ An implementation defines, for its transform type `T`:
 | `make_workspace(t::T, T, dims; ...)` / `make_workspace(t::T, x; ...)` | a [`DefaultWorkspace`](@ref) |
 | `nsubbands(t::T, dims)` | `length(subband_layout(t, dims))` |
 | `analyze(f, t::T, x; ...)`, `synthesize!(f, x, t::T; ...)` with `supports_streaming(t::T) = true` | not supported |
+| `preserves_real(t::T)` | `true`: real data gives real coefficients |
 
 Every implementation also follows these conventions;
 `AbstractMultiscaleTransforms.Testing.test_transform` checks most of them:
@@ -39,9 +40,14 @@ Every implementation also follows these conventions;
   receives a workspace checks it with [`check_workspace`](@ref) before using it.
 - Wrong input throws before any work: a `DimensionMismatch` for a wrong size,
   an `ArgumentError` for another wrong argument, each with a message.
-- Complex data is transformed as its real and imaginary parts, so that
+- The transform is linear over the complex numbers:
   `analyze(t, x + im * y) ≈ analyze(t, x) + im * analyze(t, y)` for real `x`
-  and `y`.
+  and `y`.  Unless [`preserves_real`](@ref) says otherwise, its filters are
+  real, so real data gives real coefficients and complex data is transformed
+  as its real and imaginary parts.
+- A multiscale transform puts the lowpass first: subband 1 holds the coarse
+  content.  A transform without a lowpass subband, such as a uniform filter
+  bank, orders its subbands as its documentation states.
 - The implementing package lists the interface's exported names in its own
   `export`, so that `using` it is enough.
 """
@@ -113,6 +119,11 @@ Synthesis transform: the array whose analysis is `c`, so that
 `synthesize(t, analyze(t, x)) ≈ x`.  This is the adjoint of [`analyze`](@ref)
 only when the transform is a tight (Parseval) frame; each package documents
 whether its transforms are.
+
+The result has the element type of the workspace's data, or without one, of
+`c`.  So when [`preserves_real(t)`](@ref preserves_real) is `false`,
+`synthesize(t, c)` of the coefficients of real data is complex; pass a
+workspace, or call [`synthesize!`](@ref) with a real array, to get real data.
 """
 function synthesize end
 
@@ -186,15 +197,16 @@ function similar_coefficients end
     subband_layout(t, dims) -> AbstractVector
 
 One descriptor per subband of `t` on data of size `dims`, in the order of
-[`subband`](@ref)'s index; the first is the lowpass.  What a descriptor holds
-(scale, direction, ...) is transform-specific.
+[`subband`](@ref)'s index; for a multiscale transform the first is the
+lowpass.  What a descriptor holds (scale, direction, frequency, ...) is
+transform-specific.
 """
 function subband_layout end
 
 """
     nsubbands(t, dims) -> Int
 
-Number of subbands, the lowpass included, of `t` on data of size `dims`.
+Number of subbands of `t` on data of size `dims`.
 """
 nsubbands(t::AbstractMultiscaleTransform, dims::Dims) = length(subband_layout(t, dims))
 
@@ -203,8 +215,8 @@ nsubbands(t::AbstractMultiscaleTransform, dims::Dims) = length(subband_layout(t,
     subband(c::SubbandVector, i) -> AbstractArray
 
 Subband `i` of the coefficients `c` of transform `t`, as a view (writing to
-it changes `c`).  Subband 1 is the lowpass; [`subband_layout`](@ref) describes
-the others.
+it changes `c`).  For a multiscale transform, subband 1 is the lowpass;
+[`subband_layout`](@ref) describes each subband.
 """
 function subband end
 
@@ -225,6 +237,18 @@ Whether `t` implements the streaming forms `analyze(f, t, x)` and
 `synthesize!(f, x, t)`.  `false` unless the implementing package says otherwise.
 """
 supports_streaming(::AbstractMultiscaleTransform) = false
+
+"""
+    preserves_real(t) -> Bool
+
+Whether `t` maps real data to real coefficients and real coefficients back to
+real data, as a transform with real filters does.  `true` unless the
+implementing package says otherwise.  A transform with complex filters (a
+short-time Fourier transform, a complex steerable pyramid, a Morlet wavelet
+transform) returns `false`; its `similar_coefficients` returns a complex
+array for real data.  Both kinds are linear over the complex numbers.
+"""
+preserves_real(::AbstractMultiscaleTransform) = true
 
 # ── Defaults between call forms ─────────────────────────────────────────────
 

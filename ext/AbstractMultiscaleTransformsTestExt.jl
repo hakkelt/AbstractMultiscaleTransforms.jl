@@ -4,7 +4,7 @@ using Test: @test, @testset, @test_throws
 using LinearAlgebra: LinearAlgebra
 using AbstractMultiscaleTransforms: AbstractMultiscaleTransforms, AbstractMultiscaleTransform,
     analyze, analyze!, synthesize, synthesize!, make_workspace, transform, similar_coefficients,
-    subband_layout, nsubbands, subband, supports_streaming
+    subband_layout, nsubbands, subband, supports_streaming, preserves_real
 import AbstractMultiscaleTransforms.Testing: test_transform
 
 function test_transform(
@@ -15,6 +15,9 @@ function test_transform(
         dims = size(x)
         c = analyze(t, x)
         @test c isa AbstractArray
+        if preserves_real(t) && eltype(x) <: Real
+            @test eltype(c) <: Real
+        end
         n = nsubbands(t, dims)
         @test n == length(subband_layout(t, dims))
         @test n >= 1
@@ -29,7 +32,7 @@ function test_transform(
         c2 = similar_coefficients(t, x)
         @test analyze!(c2, t, x) === c2
         @test isapprox(c2, c; rtol)
-        y2 = similar(y)
+        y2 = similar(x)
         @test synthesize!(y2, t, c) === y2
         @test isapprox(y2, x; rtol)
 
@@ -80,7 +83,7 @@ function test_transform(
             end
             @test r === nothing
             @test all(seen)
-            y3 = similar(y)
+            y3 = similar(x)
             @test synthesize!(i -> subband(t, c, i), y3, t) === y3
             @test isapprox(y3, x; rtol)
         end
@@ -95,7 +98,9 @@ function test_transform(
             # FFTs differently from an earlier call, which can change rounding.
             ws_real = make_workspace(t, real(x))
             whole = analyze(t, x; workspace = ws)
-            parts = complex.(analyze(t, real(x); workspace = ws_real), analyze(t, imag(x); workspace = ws_real))
+            re_part = analyze(t, real(x); workspace = ws_real)
+            im_part = analyze(t, imag(x); workspace = ws_real)
+            parts = preserves_real(t) ? complex.(re_part, im_part) : re_part .+ im .* im_part
             if exact_real_linear
                 @test whole == parts
             else

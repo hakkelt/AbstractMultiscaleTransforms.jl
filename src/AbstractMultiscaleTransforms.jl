@@ -21,7 +21,7 @@ export AbstractMultiscaleTransform, AbstractTransformWorkspace,
     make_workspace, transform, similar_coefficients,
     subband_layout, nsubbands, subband, SubbandVector, SubbandLayout
 
-@compat public DefaultWorkspace, check_workspace, supports_streaming, signal_size, Testing
+@compat public DefaultWorkspace, check_workspace, supports_streaming, preserves_real, signal_size, Testing
 
 include("interface.jl")
 include("workspace.jl")

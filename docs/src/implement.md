@@ -75,7 +75,10 @@ blocks of one array of the size of `x` (see [Concepts](concepts.md)):
 A transform that precomputes plans or buffers adds its own workspace type (see
 [`AbstractTransformWorkspace`](@ref)); one that can produce or consume one
 subband at a time adds the streaming forms (see
-[`AbstractMultiscaleTransforms.supports_streaming`](@ref)).
+[`AbstractMultiscaleTransforms.supports_streaming`](@ref)). A transform with
+complex filters returns complex coefficients for real data and defines
+`AbstractMultiscaleTransforms.preserves_real(::MyTransform) = false` (see
+[`AbstractMultiscaleTransforms.preserves_real`](@ref)).
 
 ## Run the conformance tests
 

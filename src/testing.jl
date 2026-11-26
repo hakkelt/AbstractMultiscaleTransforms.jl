@@ -27,7 +27,8 @@ Run the interface's conformance tests for transform `t` on data `x`, inside a
 - the streaming forms, if `supports_streaming(t)`, give the same subbands and
   reconstruction;
 - a workspace for another size (`wrong_size`, when given) is rejected;
-- for real `x` and `preserves_real(t)`, the coefficients are real;
+- when `preserves_real(t)`, the coefficients of real data are real (for
+  complex `x`, checked on `real(x)`);
 - for complex `x`, the transform is linear over the complex numbers:
   `analyze(t, x) ≈ analyze(t, real(x)) + im * analyze(t, imag(x))`, exactly
   (`==`) when `exact_real_linear` (meaningful when `preserves_real(t)`, where

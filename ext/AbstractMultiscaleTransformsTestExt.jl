@@ -100,6 +100,9 @@ function test_transform(
             whole = analyze(t, x; workspace = ws)
             re_part = analyze(t, real(x); workspace = ws_real)
             im_part = analyze(t, imag(x); workspace = ws_real)
+            if preserves_real(t)
+                @test eltype(re_part) <: Real
+            end
             parts = preserves_real(t) ? complex.(re_part, im_part) : re_part .+ im .* im_part
             if exact_real_linear
                 @test whole == parts

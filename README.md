@@ -3,7 +3,7 @@
 [![CI](https://github.com/hakkelt/AbstractMultiscaleTransforms.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/hakkelt/AbstractMultiscaleTransforms.jl/actions/workflows/CI.yml)
 [![Documentation](https://github.com/hakkelt/AbstractMultiscaleTransforms.jl/actions/workflows/documentation.yml/badge.svg)](https://hakkelt.github.io/AbstractMultiscaleTransforms.jl/dev/)
 [![Lint](https://github.com/hakkelt/AbstractMultiscaleTransforms.jl/actions/workflows/lint.yml/badge.svg)](https://github.com/hakkelt/AbstractMultiscaleTransforms.jl/actions/workflows/lint.yml)
-[![Code Style: Runic](https://img.shields.io/badge/code_style-Runic-blue)](https://github.com/fredrikekre/Runic.jl)
+[![code style: runic](https://img.shields.io/badge/code_style-%E1%9A%B1%E1%9A%A2%E1%9A%BE%E1%9B%81%E1%9A%B2-black)](https://github.com/fredrikekre/Runic.jl)
 
 A common interface for multiscale transforms such as wavelets, contourlets,
 surfacelets and shearlets: transform objects, the functions `analyze` and

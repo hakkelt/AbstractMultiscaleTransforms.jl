@@ -15,6 +15,7 @@
     subband(::Split, c::AbstractArray, i::Integer) = selectdim(c, ndims(c), i)
     signal_size(::Split, c::AbstractArray) = size(c)[1:(end - 1)]
     supports_streaming(::Split) = true
+    preserves_real(::Split) = true
 
     function _check(workspace, t, x)
         workspace === nothing || check_workspace(workspace, t, eltype(x), size(x))
@@ -106,6 +107,7 @@
     similar_coefficients(t::Haar, x::AbstractVector) =
         SubbandVector{float(eltype(x))}(undef, _haar_layout(t, size(x)), x)
     subband(::Haar, c::SubbandVector, i::Integer) = subband(c, i)
+    preserves_real(::Haar) = true
 
     function analyze!(c::SubbandVector, t::Haar, x::AbstractVector; workspace = nothing, threaded = nothing)
         _check(workspace, t, x)

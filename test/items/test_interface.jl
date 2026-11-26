@@ -58,6 +58,13 @@ end
     @test isempty(Test.detect_ambiguities(AbstractMultiscaleTransforms, ToyTransforms))
 end
 
+@testitem "preserves_real has no default" tags = [:interface] begin
+    using AbstractMultiscaleTransforms: preserves_real
+    struct Undeclared <: AbstractMultiscaleTransform end
+    @test_throws ArgumentError preserves_real(Undeclared())
+    @test_throws "Undeclared does not define `AbstractMultiscaleTransforms.preserves_real`" preserves_real(Undeclared())
+end
+
 @testitem "test_transform needs a transform and an array" begin
     using AbstractMultiscaleTransforms.Testing: test_transform
     @test_throws MethodError test_transform(1, 2)

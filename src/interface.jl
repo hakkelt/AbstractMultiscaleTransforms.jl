@@ -20,6 +20,7 @@ An implementation defines, for its transform type `T`:
 | `similar_coefficients(t::T, x)` | uninitialised coefficients for data like `x` |
 | `subband_layout(t::T, dims)` | one descriptor per subband |
 | `subband(t::T, c, i)` | subband `i` of `c`, a view |
+| `preserves_real(t::T)` | whether real data gives real coefficients |
 
 | Optional | Default |
 |:--|:--|
@@ -29,7 +30,6 @@ An implementation defines, for its transform type `T`:
 | `make_workspace(t::T, T, dims; ...)` / `make_workspace(t::T, x; ...)` | a [`DefaultWorkspace`](@ref) |
 | `nsubbands(t::T, dims)` | `length(subband_layout(t, dims))` |
 | `analyze(f, t::T, x; ...)`, `synthesize!(f, x, t::T; ...)` with `supports_streaming(t::T) = true` | not supported |
-| `preserves_real(t::T)` | `true`: real data gives real coefficients |
 
 Every implementation also follows these conventions;
 `AbstractMultiscaleTransforms.Testing.test_transform` checks most of them:
@@ -42,9 +42,9 @@ Every implementation also follows these conventions;
   an `ArgumentError` for another wrong argument, each with a message.
 - The transform is linear over the complex numbers:
   `analyze(t, x + im * y) ≈ analyze(t, x) + im * analyze(t, y)` for real `x`
-  and `y`.  Unless [`preserves_real`](@ref) says otherwise, its filters are
-  real, so real data gives real coefficients and complex data is transformed
-  as its real and imaginary parts.
+  and `y`.  When [`preserves_real`](@ref) is `true`, its filters are real, so
+  real data gives real coefficients and complex data is transformed as its
+  real and imaginary parts.
 - A multiscale transform puts the lowpass first: subband 1 holds the coarse
   content.  A transform without a lowpass subband, such as a uniform filter
   bank, orders its subbands as its documentation states.
@@ -242,13 +242,24 @@ supports_streaming(::AbstractMultiscaleTransform) = false
     preserves_real(t) -> Bool
 
 Whether `t` maps real data to real coefficients and real coefficients back to
-real data, as a transform with real filters does.  `true` unless the
-implementing package says otherwise.  A transform with complex filters (a
-short-time Fourier transform, a complex steerable pyramid, a Morlet wavelet
-transform) returns `false`; its `similar_coefficients` returns a complex
-array for real data.  Both kinds are linear over the complex numbers.
+real data, as a transform with real filters does.  A transform with complex
+filters (curvelets as computed by CurveLab, a dual-tree complex wavelet
+transform, a complex steerable pyramid, a short-time Fourier transform, a
+Morlet wavelet transform) returns `false`; its `similar_coefficients` returns
+a complex array for real data.  Both kinds are linear over the complex
+numbers.
+
+Every transform type defines a method: neither answer is a safe default, and
+the fallback throws an `ArgumentError`.
 """
-preserves_real(::AbstractMultiscaleTransform) = true
+preserves_real(t::AbstractMultiscaleTransform) = throw(
+    ArgumentError(
+        string(
+            nameof(typeof(t)), " does not define `AbstractMultiscaleTransforms.preserves_real`; ",
+            "every transform type declares whether real data gives real coefficients"
+        )
+    )
+)
 
 # ── Defaults between call forms ─────────────────────────────────────────────
 

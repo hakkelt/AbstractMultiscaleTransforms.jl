@@ -87,8 +87,8 @@ implementation.
 Most transforms have real filters: real data gives real coefficients, and
 complex data is transformed as its real and imaginary parts. A transform with
 complex filters, such as a short-time Fourier transform or a complex steerable
-pyramid, gives complex coefficients for real data and declares this with
-[`AbstractMultiscaleTransforms.preserves_real`](@ref).
+pyramid, gives complex coefficients for real data. Every transform declares
+which kind it is with [`AbstractMultiscaleTransforms.preserves_real`](@ref).
 
 ## Threads
 

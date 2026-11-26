@@ -10,9 +10,9 @@ every implementation follows, is in the docstrings of
 
 A transform is an immutable subtype of [`AbstractMultiscaleTransform`](@ref)
 that holds the parameters of the decomposition, with methods for
-`analyze!`, `synthesize!`, `similar_coefficients`, `subband_layout` and
-`subband`. The example below splits an array into two subbands: a lowpass,
-the circular moving average of three samples along the first axis, and the
+`analyze!`, `synthesize!`, `similar_coefficients`, `subband_layout`,
+`subband` and `preserves_real`. The example below splits an array into two
+subbands: a lowpass, the circular moving average of three samples along the first axis, and the
 remainder. Synthesis adds them. Both subbands have the size of the data, so
 the coefficients are one array of size `(size(x)..., 2)`, with subband `i`
 the slice `i` along the last axis.
@@ -20,7 +20,7 @@ the slice `i` along the last axis.
 ```@example twoband
 using AbstractMultiscaleTransforms
 import AbstractMultiscaleTransforms: analyze!, synthesize!, similar_coefficients,
-    subband_layout, subband, signal_size
+    subband_layout, subband, signal_size, preserves_real
 using AbstractMultiscaleTransforms: check_workspace
 
 struct TwoBand <: AbstractMultiscaleTransform end
@@ -29,6 +29,7 @@ subband_layout(::TwoBand, dims::Dims) = [:lowpass, :detail]
 similar_coefficients(t::TwoBand, x::AbstractArray) =
     similar(x, float(eltype(x)), (size(x)..., nsubbands(t, size(x))))
 subband(::TwoBand, c::AbstractArray, i::Integer) = selectdim(c, ndims(c), i)
+preserves_real(::TwoBand) = true      # real filters
 signal_size(::TwoBand, c::AbstractArray) = size(c)[1:(end - 1)]
 
 function analyze!(c::AbstractArray, t::TwoBand, x::AbstractArray;
@@ -76,9 +77,8 @@ A transform that precomputes plans or buffers adds its own workspace type (see
 [`AbstractTransformWorkspace`](@ref)); one that can produce or consume one
 subband at a time adds the streaming forms (see
 [`AbstractMultiscaleTransforms.supports_streaming`](@ref)). A transform with
-complex filters returns complex coefficients for real data and defines
-`AbstractMultiscaleTransforms.preserves_real(::MyTransform) = false` (see
-[`AbstractMultiscaleTransforms.preserves_real`](@ref)).
+complex filters returns complex coefficients for real data, and its
+[`AbstractMultiscaleTransforms.preserves_real`](@ref) method returns `false`.
 
 ## Run the conformance tests
 
